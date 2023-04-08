@@ -50,7 +50,7 @@ function getHeaders() {
 
 export function requestOpenaiClient(path: string) {
   return (body: any, method = "POST") =>
-    fetch("/api/openai?_vercel_no_cache=1", {
+    fetch("/api/openai", {
       method,
       headers: {
         "Content-Type": "application/json",
@@ -134,8 +134,6 @@ export async function requestChatStream(
     stream: true,
     filterBot: options?.filterBot,
   });
-
-  console.log("[Request] ", req);
 
   const controller = new AbortController();
   const reqTimeoutId = setTimeout(() => controller.abort(), TIME_OUT_MS);

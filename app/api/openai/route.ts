@@ -4,16 +4,15 @@ import { requestOpenai } from "../common";
 async function makeRequest(req: NextRequest) {
   try {
     const api = await requestOpenai(req);
-    const res = new NextResponse(api.body);
+    const res = new NextResponse(JSON.stringify(api.data));
     res.headers.set("Content-Type", "application/json");
     res.headers.set("Cache-Control", "no-cache");
     return res;
-  } catch (e) {
-    console.error("[OpenAI] ", req.body, e);
+  } catch (e: any) {
     return NextResponse.json(
       {
         error: true,
-        msg: JSON.stringify(e),
+        msg: e.response.data.error.message,
       },
       {
         status: 500,

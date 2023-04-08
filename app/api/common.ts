@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import axios, { AxiosRequestConfig } from "axios";
 
 const OPENAI_URL = "api.openai.com";
 const DEFAULT_PROTOCOL = "https";
@@ -8,15 +9,16 @@ const BASE_URL = process.env.BASE_URL ?? OPENAI_URL;
 export async function requestOpenai(req: NextRequest) {
   const apiKey = req.headers.get("token");
   const openaiPath = req.headers.get("path");
-
-  console.log("[Proxy] ", openaiPath);
-
-  return fetch(`${PROTOCOL}://${BASE_URL}/${openaiPath}`, {
+  let config: AxiosRequestConfig = {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${apiKey}`,
     },
     method: req.method,
-    body: req.body,
-  });
+  };
+  if (req.body) {
+    config.data = await req.json();
+  }
+
+  return axios(`${PROTOCOL}://${BASE_URL}/${openaiPath}`, config);
 }
